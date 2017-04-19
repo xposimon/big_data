@@ -84,6 +84,7 @@ class general_algorithm:
 
     def judge(self, comment):
         judgement = {}
+        p = []
         for _class in self.classes:
             judgement[_class] = {}
             feature_set = self.get_train_feature(comment, _class)
@@ -91,10 +92,22 @@ class general_algorithm:
                 now_judgement = '0'
             else :
                 now_judgement = self.classifier[_class].classify(feature_set)
-            print(_class + ":" + now_judgement)
-        return
+            # print(_class + ":" + now_judgement)
+            p.append(str(now_judgement))
+        return p
 
 if __name__ == '__main__':
     test = general_algorithm()
     test.train()
-    test.judge('打开瓶子除了挤压处有点渗漏外，其他很好。这可能是物流原因吧，不过还好能用，价格也很实惠。产品是正品，用过很滑顺。')
+
+    with open('test_result.csv','w', encoding= "utf-8") as r:
+        with open('raw_data_test.csv', 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    r.write('\n')
+                    continue
+                plist = test.judge(line)
+                r.write(','.join(plist))
+                r.write('\n')
+
